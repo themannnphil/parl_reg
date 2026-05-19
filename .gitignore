@@ -1,0 +1,49 @@
+# ─── Dependencies ─────────────────────────────────────────────────────────────
+/vendor/
+composer.lock
+
+# ─── Environment & Config ─────────────────────────────────────────────────────
+.env
+.env.local
+config/config.local.php
+
+# ─── Storage & Logs ───────────────────────────────────────────────────────────
+/storage/logs/*
+/storage/uploads/*
+!storage/logs/.gitkeep
+!storage/uploads/.gitkeep
+
+# ─── IDE & Editors ────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+
+# ─── Testing ──────────────────────────────────────────────────────────────────
+/coverage/
+.phpunit.result.cache
+
+# ─── System Files ─────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.directory
+ehthumbs.db
+Desktop.ini
+
+# ─── PHP ──────────────────────────────────────────────────────────────────────
+*.php~
+*.phar
+
+# ─── Node (if used for assets) ────────────────────────────────────────────────
+/node_modules/
+npm-debug.log
+yarn-error.log
+
+# ─── Local Development ────────────────────────────────────────────────────────
+.vscode-server/
+.editorconfig
