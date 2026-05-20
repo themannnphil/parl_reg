@@ -7,6 +7,9 @@ composer.lock
 .env.local
 config/config.local.php
 
+# ─── Old Frontend Files ────────────────────────────────────────────────────────
+/Internship/  # Use public/portal.html and public/admin/dashboard.html instead
+
 # ─── Storage & Logs ───────────────────────────────────────────────────────────
 /storage/logs/*
 /storage/uploads/*
