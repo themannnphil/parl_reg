@@ -60,7 +60,7 @@ export APP_URL=http://localhost:8000
 ### 6. Start Dev Server
 
 ```bash
-php -S localhost:8000 -t public/
+php -S 0.0.0.0:8000 -t public/
 ```
 
 ### 7. Run API Test Suite
