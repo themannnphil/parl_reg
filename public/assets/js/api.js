@@ -1,118 +1,68 @@
 /**
- * API Client for ParlReg Backend
- * Handles all communication with the API endpoints
+ * ParlReg API Client
+ * Connects frontend pages to the PHP backend at /api/v1
+ * Used by: login.php, events.php, register.php, dashboard.php
  */
 
-const API_BASE = '/api/v1';
+const ParlRegAPI = (() => {
+  // Adjust this base URL to match your local setup
+  const BASE = (window.PARLREG_BASE || '') + '/api/v1';
+  let _csrf = '';
 
-class APIClient {
-  constructor(baseUrl = API_BASE) {
-    this.baseUrl = baseUrl;
-    this.headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    };
-  }
+  // Extract CSRF token from last login response and store it
+  function setCSRF(token) { _csrf = token || ''; }
+  function getCSRF() { return _csrf || window.PARLREG_CSRF || sessionStorage.getItem('parlreg_csrf') || ''; }
 
-  /**
-   * Make HTTP request
-   */
-  async request(method, endpoint, body = null) {
-    const url = this.baseUrl + endpoint;
-    const options = {
-      method,
-      headers: this.headers,
-    };
+  async function request(method, path, body = null, isForm = false) {
+    const headers = { 'X-CSRF-Token': getCSRF() };
+    if (!isForm && body) headers['Content-Type'] = 'application/json';
 
-    if (body) {
-      options.body = JSON.stringify(body);
+    const opts = { method, headers, credentials: 'include' };
+    if (body) opts.body = isForm ? body : JSON.stringify(body);
+
+    const res = await fetch(BASE + path, opts);
+    const data = await res.json().catch(() => ({}));
+
+    // Auto-store CSRF token from login
+    if (data.csrf_token) {
+      _csrf = data.csrf_token;
+      sessionStorage.setItem('parlreg_csrf', _csrf);
+    }
+    // Auto-store user info
+    if (data.user) {
+      sessionStorage.setItem('parlreg_user', JSON.stringify(data.user));
     }
 
-    try {
-      const response = await fetch(url, options);
-      const data = await response.json();
+    return data;
+  }
 
-      if (!response.ok) {
-        throw new Error(data.error || `HTTP ${response.status}`);
+  return {
+    setCSRF,
+    get: (path) => request('GET', path),
+    post: (path, body) => request('POST', path, body),
+    put: (path, body) => request('PUT', path, body),
+    del: (path) => request('DELETE', path),
+    upload: (path, fd) => request('POST', path, fd, true),
+
+    // Auth helpers
+    getUser() {
+      try { return JSON.parse(sessionStorage.getItem('parlreg_user') || 'null'); }
+      catch { return null; }
+    },
+    isLoggedIn() { return !!this.getUser(); },
+    logout() {
+      sessionStorage.removeItem('parlreg_user');
+      sessionStorage.removeItem('parlreg_csrf');
+      return this.post('/auth/logout');
+    },
+
+    // Require auth — redirect to login if not authenticated
+    requireAuth(redirectTo = '../login.php') {
+      if (!this.isLoggedIn()) {
+        window.location.href = redirectTo;
+        return false;
       }
-
-      return data;
-    } catch (error) {
-      console.error('API Error:', error);
-      throw error;
-    }
-  }
-
-  // ── Auth Endpoints ────────────────────────────────────────────────────────
-  login(email, password) {
-    return this.request('POST', '/auth/login', { email, password });
-  }
-
-  logout() {
-    return this.request('POST', '/auth/logout');
-  }
-
-  getCurrentUser() {
-    return this.request('GET', '/auth/me');
-  }
-
-  // ── Events Endpoints ──────────────────────────────────────────────────────
-  getEvents(filters = {}) {
-    const params = new URLSearchParams(filters).toString();
-    return this.request('GET', `/events${params ? '?' + params : ''}`);
-  }
-
-  getEvent(eventId) {
-    return this.request('GET', `/events/${eventId}`);
-  }
-
-  createEvent(data) {
-    return this.request('POST', '/events', data);
-  }
-
-  updateEvent(eventId, data) {
-    return this.request('PUT', `/events/${eventId}`, data);
-  }
-
-  // ── Portal Endpoints ──────────────────────────────────────────────────────
-  getPortalEvent(slug) {
-    return this.request('GET', `/portal/${slug}`);
-  }
-
-  getPortalSchema(slug) {
-    return this.request('GET', `/portal/${slug}/schema`);
-  }
-
-  // ── Registration Endpoints ────────────────────────────────────────────────
-  submitRegistration(eventId, data) {
-    return this.request('POST', `/events/${eventId}/register`, data);
-  }
-
-  getRegistrations(eventId, filters = {}) {
-    const params = new URLSearchParams(filters).toString();
-    return this.request('GET', `/events/${eventId}/registrations${params ? '?' + params : ''}`);
-  }
-
-  getRegistration(eventId, registrationId) {
-    return this.request('GET', `/events/${eventId}/registrations/${registrationId}`);
-  }
-
-  updateRegistrationStatus(eventId, registrationId, status) {
-    return this.request('PUT', `/events/${eventId}/registrations/${registrationId}/status`, { status });
-  }
-
-  // ── Error Handler ─────────────────────────────────────────────────────────
-  handleError(error) {
-    if (error.message.includes('401') || error.message.includes('Unauthenticated')) {
-      // Redirect to login
-      window.location.href = '/admin/login.html';
-    } else if (error.message.includes('403') || error.message.includes('Unauthorized')) {
-      console.error('Access denied');
-    } else {
-      console.error('Request failed:', error.message);
-    }
-  }
-}
-
-// Create global API instance
-const api = new APIClient();
+      return true;
+    },
+  };
+})();

@@ -22,6 +22,7 @@ $regRef  = '';
 $fileId  = null;
 $userId2 = null;
 $smtpId  = null;
+$testId  = time();
 
 function run(string $name, callable $fn): void {
     global $passed, $failed;
@@ -96,6 +97,13 @@ function request(string $method, string $url, array $body = [], bool $multipart 
     $raw    = curl_exec($ch);
     $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $hSize  = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+    
+    if ($raw === false) {
+        $err = curl_error($ch);
+        curl_close($ch);
+        throw new RuntimeException("cURL Error: $err");
+    }
+    
     curl_close($ch);
 
     $rawHeaders = substr($raw, 0, $hSize);
@@ -162,10 +170,10 @@ run('List users', function() {
     assert_field($res, 'data');
 });
 
-run('Create organizer user', function() use (&$userId2) {
+run('Create organizer user', function() use (&$userId2, $testId) {
     $res = POST('/users', [
         'fullname' => 'Test Organizer',
-        'email'    => 'organizer@parliament.local',
+        'email'    => "organizer_$testId@parliament.local",
         'password' => 'Organizer@123',
         'role'     => 'organizer',
     ]);
@@ -174,10 +182,10 @@ run('Create organizer user', function() use (&$userId2) {
     $userId2 = $res['body']['data']['id'];
 });
 
-run('Create user with duplicate email returns 409', function() {
+run('Create user with duplicate email returns 409', function() use ($testId) {
     $res = POST('/users', [
         'fullname' => 'Dup User',
-        'email'    => 'organizer@parliament.local',
+        'email'    => "organizer_$testId@parliament.local",
         'password' => 'Test@123',
         'role'     => 'organizer',
     ]);
@@ -190,11 +198,11 @@ run('Update user role', function() use ($userId2) {
     assert_ok($res);
 });
 
-run('Get single user', function() use ($userId2) {
+run('Get single user', function() use ($userId2, $testId) {
     $res = GET("/users/$userId2");
     assert_status($res, 200);
     assert_ok($res);
-    assert_field($res, 'data.email', 'organizer@parliament.local');
+    assert_field($res, 'data.email', "organizer_$testId@parliament.local");
 });
 
 // ─── 3. SMTP Settings ─────────────────────────────────────────────────────────
@@ -203,7 +211,7 @@ echo "\n\033[1m[3] SMTP Settings\033[0m";
 run('Create SMTP profile', function() use (&$smtpId) {
     $res = POST('/settings/smtp', [
         'name'       => 'Test SMTP',
-        'host'       => 'smtp.mailtest.local',
+        'host'       => '127.0.0.1',
         'port'       => 587,
         'encryption' => 'tls',
         'username'   => 'test@parliament.local',
@@ -234,10 +242,10 @@ run('Create event with missing required fields returns 422', function() {
     assert_status($res, 422);
 });
 
-run('Create event (draft)', function() use (&$eventId, $smtpId) {
+run('Create event (draft)', function() use (&$eventId, $smtpId, $testId) {
     $res = POST('/events', [
-        'name_en'            => 'Inter-Parliamentary Forum 2026',
-        'name_fr'            => 'Forum Interparlementaire 2026',
+        'name_en'            => "Inter-Parliamentary Forum 2026 $testId",
+        'name_fr'            => "Forum Interparlementaire 2026 $testId",
         'date_start'         => '2026-09-01 09:00:00',
         'date_end'           => '2026-09-03 18:00:00',
         'location_en'        => 'Parliament House, Accra, Ghana',
@@ -254,11 +262,11 @@ run('Create event (draft)', function() use (&$eventId, $smtpId) {
     $eventId = $res['body']['data']['id'];
 });
 
-run('Get event by ID', function() use ($eventId) {
+run('Get event by ID', function() use ($eventId, $testId) {
     $res = GET("/events/$eventId");
     assert_status($res, 200);
     assert_ok($res);
-    assert_field($res, 'data.name_en', 'Inter-Parliamentary Forum 2026');
+    assert_field($res, 'data.name_en', "Inter-Parliamentary Forum 2026 $testId");
 });
 
 run('Update event', function() use ($eventId) {
@@ -437,7 +445,6 @@ run('Publish event — returns any French warnings', function() use ($eventId) {
 echo "\n\033[1m[9] Public Portal\033[0m";
 
 run('GET portal by slug', function() use ($eventId) {
-    $slug = DB_NAME; // We'll just fetch the slug from our event
     // Fetch slug via admin API
     global $API, $session, $csrf;
     $res = GET("/events/$eventId");

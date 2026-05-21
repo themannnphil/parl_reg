@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
  */
 async function loadEvents() {
   try {
-    const response = await api.request('GET', '/events?status=published');
+    const response = await api.request('GET', '/events/published');
     const events = response.data || [];
 
     const eventsList = document.getElementById('eventsList');
@@ -75,7 +75,7 @@ async function selectEvent(event) {
 
   // Load form schema if available
   try {
-    const schemaResponse = await api.request('GET', `/events/${event.id}/schema`);
+    const schemaResponse = await api.request('GET', `/portal/${event.slug}/schema`);
     if (schemaResponse.data) {
       buildDynamicForm(schemaResponse.data);
     }

@@ -20,6 +20,32 @@
 class EventController {
     // ─── Events ──────────────────────────────────────────────────────────────
 
+    public function listPublished(): never {
+        // Public endpoint - no authentication required
+        $page   = max(1, (int)($_GET['page'] ?? 1));
+        $limit  = 20;
+        $offset = ($page - 1) * $limit;
+
+        $total = DB::row("SELECT COUNT(*) as cnt FROM events WHERE status = 'published'")['cnt'];
+        $events = DB::all("SELECT e.id, e.slug, e.name_en, e.name_fr, e.date_start, e.date_end,
+                                  e.location_en, e.location_fr, e.theme_color,
+                                  e.registration_deadline, e.capacity,
+                                  (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.id) as registrant_count
+                           FROM events e
+                           WHERE e.status = 'published'
+                           ORDER BY e.date_start DESC
+                           LIMIT ? OFFSET ?", [$limit, $offset]);
+
+        Response::json([
+            'success'     => true,
+            'data'        => $events,
+            'total'       => (int)$total,
+            'page'        => $page,
+            'per_page'    => $limit,
+            'total_pages' => ceil($total / $limit),
+        ]);
+    }
+
     public function index(): never {
         Auth::requireRole('admin', 'organizer');
 

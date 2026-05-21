@@ -2,6 +2,8 @@
 // ParlReg — Application Configuration
 // Copy this file to config.php and set real values. Never commit secrets.
 
+$host1 = "http://0.0.0.0:8000";
+
 define('DB_HOST',     getenv('DB_HOST')     ?: 'localhost');
 define('DB_PORT',     getenv('DB_PORT')     ?: '3306');
 define('DB_NAME',     getenv('DB_NAME')     ?: 'parlreg');
@@ -18,6 +20,7 @@ define('BASE_PATH',     dirname(__DIR__));
 define('STORAGE_PATH',  BASE_PATH . '/storage/uploads');
 define('LOG_PATH',      BASE_PATH . '/storage/logs');
 define('LANG_PATH',     BASE_PATH . '/lang');
+define('HOST',          $host1);
 
 // Security
 define('CSRF_TOKEN_LENGTH', 32);
@@ -45,3 +48,7 @@ define('ENCRYPT_KEY', getenv('ENCRYPT_KEY') ?: str_repeat('0', 64));
 
 // API
 define('API_PREFIX', '/api/v1');
+
+
+
+

@@ -1,3 +1,7 @@
+RewriteEngine On
+RewriteRule ^home index.php [NC,L]
+
+
 Options -Indexes -ExecCGI
 
 # Deny access to storage directory (safety net)
