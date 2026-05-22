@@ -15,7 +15,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 
 // Check if user is admin
 if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
-    // header("Location: ../index.php");
+    // header("Location: ../index.php"); routing issue
     header("Location: /index.php");
     exit;
 }
