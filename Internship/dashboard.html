@@ -75,6 +75,20 @@
     }
   </style>
 </head>
+<!-- Add this card to your dashboard -->
+<div class="bg-white rounded-xl p-6 shadow-sm border-2 border-primary/20 mt-4">
+  <div class="flex items-center justify-between">
+    <div>
+      <h3 class="text-xl font-bold text-gray-800">🎉 Diplomatic Event Portal</h3>
+      <p class="text-gray-600 mt-1">Manage event registrations, view schedules, and track attendees</p>
+    </div>
+    <a href="parliamentaryservices.html" class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-all flex items-center gap-2">
+      <span class="material-symbols-outlined">celebration</span>
+      Go to Event Portal →
+    </a>
+  </div>
+</div>
+
 <body class="bg-surface text-on-surface font-body-md">
   <!-- Top Navigation - fixed height, no overflow -->
   <header class="bg-white border-b border-outline-variant shadow-sm z-50 shrink-0">
@@ -101,7 +115,7 @@
       </div>
       <nav class="hidden md:flex items-center gap-4">
         <a href="#" class="text-sm font-medium text-primary border-b-2 border-primary pb-1">Dashboard</a>
-        <a href="#" class="text-sm font-medium text-on-surface-variant hover:text-primary">Events</a>
+        <a href= "#" class="text-sm font-medium text-on-surface-variant hover:text-primary">Events</a>
         <a href="#" class="text-sm font-medium text-on-surface-variant hover:text-primary">Resources</a>
         <a href="#" class="text-sm font-medium text-on-surface-variant hover:text-primary">Directory</a>
       </nav>
@@ -491,6 +505,7 @@
       localStorage.setItem('parliamentary_registration_builder', JSON.stringify(formComponents));
       showToast('✅ Registration structure saved successfully!');
     });
+
   </script>
 </body>
 </html>
