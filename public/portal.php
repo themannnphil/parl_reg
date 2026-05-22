@@ -18,7 +18,7 @@
   <!-- Colleague's original CSS — untouched -->
   <link rel="stylesheet" href="parliamentaryservices.css" />
   <!-- ParlReg additions (animations, toasts, status badges) -->
-  <link rel="stylesheet" href="css/parlreg.css" />
+  <link rel="stylesheet" href="/assets/css/parlreg.css" />
 
   <style>
     /* ── Additions only — never overriding colleague's styles ──────── */

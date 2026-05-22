@@ -1,17 +1,22 @@
-/**
- * ParlReg API Client
- * Connects frontend pages to the PHP backend at /api/v1
- * Used by: login.php, events.php, register.php, dashboard.php
- */
-
 const ParlRegAPI = (() => {
-  // Adjust this base URL to match your local setup
-  const BASE = (window.PARLREG_BASE || '') + '/api/v1';
+  // Use your local PHP built-in server
+  const BASE = 'http://localhost:8000/api/v1';
+  // Try multiple bases; will use the first one that exists
+//   const BASE = 
+//     window.location.hostname === 'localhost' && window.location.port === '8000' ? 'http://localhost:8000/api/v1' :
+//     window.location.hostname === 'localhost' && window.location.port === '8888' ? 'http://localhost:8888/api/v1' :
+//     window.location.hostname === '0.0.0.0' ? 'http://0.0.0.0:8000/api/v1' :
+//     'http://localhost:8000/api/v1'; // fallback
+
+// console.log("Using API base:", BASE);
+  
+
   let _csrf = '';
 
-  // Extract CSRF token from last login response and store it
   function setCSRF(token) { _csrf = token || ''; }
-  function getCSRF() { return _csrf || window.PARLREG_CSRF || sessionStorage.getItem('parlreg_csrf') || ''; }
+  function getCSRF() { 
+    return _csrf || window.PARLREG_CSRF || sessionStorage.getItem('parlreg_csrf') || ''; 
+  }
 
   async function request(method, path, body = null, isForm = false) {
     const headers = { 'X-CSRF-Token': getCSRF() };
@@ -20,20 +25,23 @@ const ParlRegAPI = (() => {
     const opts = { method, headers, credentials: 'include' };
     if (body) opts.body = isForm ? body : JSON.stringify(body);
 
-    const res = await fetch(BASE + path, opts);
-    const data = await res.json().catch(() => ({}));
+    try {
+      const res = await fetch(BASE + path, opts);
+      const data = await res.json().catch(() => ({}));
 
-    // Auto-store CSRF token from login
-    if (data.csrf_token) {
-      _csrf = data.csrf_token;
-      sessionStorage.setItem('parlreg_csrf', _csrf);
-    }
-    // Auto-store user info
-    if (data.user) {
-      sessionStorage.setItem('parlreg_user', JSON.stringify(data.user));
-    }
+      if (data.csrf_token) {
+        _csrf = data.csrf_token;
+        sessionStorage.setItem('parlreg_csrf', _csrf);
+      }
+      if (data.user) {
+        sessionStorage.setItem('parlreg_user', JSON.stringify(data.user));
+      }
 
-    return data;
+      return data;
+    } catch (err) {
+      console.error('API request failed:', err);
+      return { success: false, error: 'Connection error' };
+    }
   }
 
   return {
@@ -44,7 +52,6 @@ const ParlRegAPI = (() => {
     del: (path) => request('DELETE', path),
     upload: (path, fd) => request('POST', path, fd, true),
 
-    // Auth helpers
     getUser() {
       try { return JSON.parse(sessionStorage.getItem('parlreg_user') || 'null'); }
       catch { return null; }
@@ -56,8 +63,7 @@ const ParlRegAPI = (() => {
       return this.post('/auth/logout');
     },
 
-    // Require auth — redirect to login if not authenticated
-    requireAuth(redirectTo = '../login.php') {
+    requireAuth(redirectTo = 'login.php') {
       if (!this.isLoggedIn()) {
         window.location.href = redirectTo;
         return false;

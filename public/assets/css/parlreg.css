@@ -17,6 +17,13 @@
   opacity: 1;
   transform: translateY(0);
 }
+.hero-section {
+  position: relative;
+  min-height: 85vh;
+  background: url("../images/parliamentaryservices.png") center center/cover no-repeat;
+  display: flex;
+  align-items: center;
+}
 
 /* ── Staggered children ───────────────────────────────────────────── */
 .reveal-stagger > * { opacity: 0; transform: translateY(16px); transition: opacity .4s ease, transform .4s ease; }

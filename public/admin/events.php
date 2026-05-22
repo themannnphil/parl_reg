@@ -1,10 +1,27 @@
-<?php require_once __DIR__ . '/../../app/bootstrap.php'; 
-  if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+<?php
+session_start();
+require_once __DIR__ . '/../../app/bootstrap.php';
 
+// TEMP DEBUG
+// echo "<pre>";
+// print_r($_SESSION);
+// echo "</pre>";
+// exit;
+
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header("Location: login.php");
     exit;
 }
+
+// Check if user is admin
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+    // header("Location: ../index.php");
+    header("Location: /index.php");
+    exit;
+}
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +30,8 @@
   <title>Events — Parliamentary Services Admin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="../css/parlreg.css"/>
+  
+  <link rel="stylesheet" href="../assets/css/parlreg.css"/>
   <script>
     window.PARLREG_CSRF = "<?= CSRF::token() ?>";
   </script>
@@ -97,7 +115,7 @@
     <a href="#"     class="nav-item-side"><i class="bi bi-shield-check"></i> Audit Log</a>
   </nav>
   <div class="mt-auto p-3 border-top" style="border-color:rgba(255,255,255,.08)!important">
-    <a href="../index.php" class="nav-item-side" style="font-size:12px">
+    <a href="../portal.php" class="nav-item-side" style="font-size:12px">
       <i class="bi bi-box-arrow-up-right"></i> View Portal
     </a>
     <a href="#" class="nav-item-side" style="font-size:12px" onclick="doLogout()">
@@ -240,7 +258,7 @@
       </div>
       <div class="modal-footer border-0 px-4 pb-4">
         <button type="button" class="btn btn-light border px-4" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn-ps btn px-5" id="createEventBtn" onclick="createNewEvent()". >
+        <button type="button" class="btn-ps btn px-5" id="createEventBtn" onclick="createNewEvent()">
           <span id="createBtnText">Create Event</span>
           <span class="spinner-border spinner-border-sm d-none ms-2" id="createSpinner"></span>
         </button>

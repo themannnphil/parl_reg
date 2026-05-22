@@ -111,7 +111,7 @@
 <!-- ── Navbar ──────────────────────────────────────────────────────── -->
 <nav class="navbar bg-white border-bottom py-3 shadow-sm">
   <div class="container">
-    <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="parliamentaryservices.html">
+    <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="../index.php">
       <div style="width:34px;height:34px;background:var(--ps-green);border-radius:8px;display:flex;align-items:center;justify-content:center;">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="white" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z"/></svg>
       </div>
@@ -159,7 +159,7 @@
             <div class="mb-3">
               <div class="d-flex justify-content-between">
                 <label class="form-label small fw-semibold">Password</label>
-                <a href="forgot-password.php" class="small text-success text-decoration-none">Forgot password?</a>
+                <a href="#forgot-password.php" class="small text-success text-decoration-none">Forgot password?</a>
               </div>
               <div class="position-relative">
                 <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
@@ -198,7 +198,10 @@
         <!-- Dev hint -->
         <div class="text-center mt-3 small text-muted">
           <span class="badge bg-light text-secondary border" style="font-size:11px;cursor:pointer" onclick="fillDemo()">
-            Demo: admin@parliament.local / Admin@ParlReg1
+            Demo: Admin Credentials
+          </span>
+          <span class="badge bg-light text-secondary border" style="font-size:11px;cursor:pointer" onclick="fillDemo1()">
+            Demo: Organizer Credentials
           </span>
         </div>
 
@@ -231,6 +234,10 @@
   function fillDemo() {
     document.getElementById('email').value    = 'admin@parliament.local';
     document.getElementById('password').value = 'Admin@ParlReg1';
+  }
+  function fillDemo1() {
+    document.getElementById('email').value    = 'organizer@parliament.local';
+    document.getElementById('password').value = 'Organizer@123';
   }
 
   // Show alert
@@ -269,7 +276,7 @@
       const res = await ParlRegAPI.post('/auth/login', { email, password });
       if (res.success) {
         showAlert('Signed in successfully. Redirecting…', 'success');
-        setTimeout(() => { window.location.href = 'events.php'; }, 800);
+        setTimeout(() => { window.location.href = './events.php'; }, 800);
       } else {
         showAlert(res.error || 'Invalid credentials. Please try again.');
       }

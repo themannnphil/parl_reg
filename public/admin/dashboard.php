@@ -1,9 +1,13 @@
-<?php require_once __DIR__ . '/../../app/bootstrap.php'; 
-  if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-
+<?php require_once __DIR__ . '/../../app/bootstrap.php';
+  if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header("Location: login.php");
     exit;
-}
+  }
+  // Check if user is admin
+  if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+    header("Location: ../index.php");
+    exit;
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -109,7 +113,7 @@
   </span>
 
   <nav class="hidden md:flex items-center gap-4 ml-auto">
-    <a href="../index.php" class="text-sm font-medium text-on-surface-variant admin-nav-link">Portal</a>
+    <a href="../portal.php" class="text-sm font-medium text-on-surface-variant admin-nav-link">Portal</a>
     <a href="#" class="text-sm font-medium text-primary border-b-2 border-primary pb-1 admin-nav-link active">Builder</a>
     <a href="events.php" class="text-sm font-medium text-on-surface-variant admin-nav-link">Events</a>
     <a href="registrations.php" class="text-sm font-medium text-on-surface-variant admin-nav-link">Registrations</a>
