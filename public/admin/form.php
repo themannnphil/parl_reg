@@ -1,9 +1,13 @@
-<?php require_once __DIR__ . '/../../app/bootstrap.php'; 
-  if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-
+<?php require_once __DIR__ . '/../../app/bootstrap.php';
+  if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header("Location: login.php");
     exit;
-}
+  }
+  // Check if user is admin
+  if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+    header("Location: ../index.php");
+    exit;
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
