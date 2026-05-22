@@ -1,0 +1,172 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #ffffff;
+}
+
+/* NAVBAR */
+
+.nav-link {
+  color: #555;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.nav-link:hover {
+  color: #0b6b1b;
+}
+
+.active-link {
+  color: #0b6b1b !important;
+  border-bottom: 3px solid #0b6b1b;
+}
+
+/* HERO */
+
+.hero-section {
+  position: relative;
+  min-height: 85vh;
+  background: url("assets/images/parliamentaryservices.png") center center/cover no-repeat;
+  display: flex;
+  align-items: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.hero-content {
+  z-index: 2;
+}
+
+.hero-badge {
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+}
+
+.hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+}
+
+/* ABOUT */
+
+.about-card {
+  border-radius: 20px;
+}
+
+.schedule-card {
+  background: #0c2d17;
+  color: white;
+  border-radius: 20px;
+  padding: 35px;
+}
+
+.schedule-icon {
+  font-size: 1.5rem;
+}
+
+/* INFO CARDS */
+
+.info-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 16px;
+  padding: 28px;
+  background: white;
+  transition: 0.3s;
+}
+
+.info-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+
+.info-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: #edf7ef;
+  color: #0b6b1b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+/* MAP */
+
+.map-card {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid #e5e5e5;
+}
+
+.map-box {
+  background: #eaf5eb;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+}
+
+.map-icon {
+  font-size: 3rem;
+  color: #0b6b1b;
+}
+
+/* CTA */
+
+.cta-section {
+  background: #046415;
+  padding: 90px 20px;
+}
+
+.cta-text {
+  max-width: 700px;
+  font-size: 1.1rem;
+}
+
+/* FOOTER */
+
+.footer-section {
+  padding: 30px 0;
+  border-top: 1px solid #e5e5e5;
+  background: #fff;
+}
+
+.footer-links a {
+  color: #666;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.footer-links a:hover {
+  color: #0b6b1b;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+  .hero-section {
+    min-height: 75vh;
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .hero-meta {
+    justify-content: center;
+  }
+
+  .schedule-card {
+    text-align: center;
+  }
+
+}
